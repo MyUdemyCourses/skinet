@@ -13,7 +13,7 @@ import { IBasketTotals } from '../shared/models/basket';
 })
 export class CheckoutComponent implements OnInit {
   checkoutForm: FormGroup;
-  basketTotal$ : Observable<IBasketTotals>;
+  basketTotal$: Observable<IBasketTotals>;
 
   constructor(private fb: FormBuilder,
     private accountService: AccountService,
@@ -23,6 +23,10 @@ export class CheckoutComponent implements OnInit {
 
     this.createCheckoutForm();
     this.getAddressFormValue();
+    setTimeout(() => {
+      this.getDeliveryMethodValue();
+    }, 1000);
+
     this.basketTotal$ = this.basketService.basketTotal$;
   }
 
@@ -54,6 +58,13 @@ export class CheckoutComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+  }
+
+  getDeliveryMethodValue() {
+    const basket = this.basketService.getCurrentBasketValue();
+    if (basket && basket.deliveryMethodId !== null) {
+      this.checkoutForm.get('deliveryForm').get('deliveryMethod').patchValue(basket.deliveryMethodId.toString());
+    }
   }
 
 }
